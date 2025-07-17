@@ -11,12 +11,14 @@ const HomeScreen = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName = 'home';
+          let iconName = 'clipboard';
+
           if (route.name === 'Audits') {
             iconName = focused ? 'clipboard' : 'clipboard-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
           }
+
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#007AFF',

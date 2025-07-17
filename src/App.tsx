@@ -15,6 +15,7 @@ import SignupScreen from './screens/SignupScreen';
 import HomeScreen from './screens/HomeScreen';
 import CreateAuditScreen from './screens/HomeScreen/CreateAuditScreen';
 import AuditDetailScreen from './screens/HomeScreen/AuditDetailScreen';
+import EditProfileScreen from './screens/HomeScreen/EditProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +41,7 @@ function AppNavigator() {
           />
           <Stack.Screen name="CreateAudit" component={CreateAuditScreen} />
           <Stack.Screen name="AuditDetail" component={AuditDetailScreen} />
+          <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         </>
       ) : (
         <>

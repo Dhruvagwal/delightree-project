@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useAuditStorage, Audit } from '../../../hooks/useAuditStorage';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../interfaces/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useAuth } from '../../../context/AuthContext';
@@ -32,9 +32,12 @@ const AuditsTab = () => {
   const handlePress = (audit: any) => {
     navigation.navigate('AuditDetail', { audit });
   };
-  useEffect(() => {
-    loadAudits();
-  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadAudits();
+    }, []),
+  );
 
   return (
     <View style={styles.container}>
