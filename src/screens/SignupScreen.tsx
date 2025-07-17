@@ -1,4 +1,3 @@
-// src/screens/SignupScreen.tsx
 import React from 'react';
 import { View, Button, Text, TouchableOpacity } from 'react-native';
 import CSignup from '../components/auth/CSignup';

@@ -13,7 +13,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 import HomeScreen from './screens/HomeScreen';
-import DetailsScreen from './screens/DetailsScreen';
+import CreateAuditScreen from './screens/HomeScreen/CreateAuditScreen';
+import AuditDetailScreen from './screens/HomeScreen/AuditDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,7 +32,15 @@ function AppNavigator() {
   return (
     <Stack.Navigator>
       {user ? (
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <>
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="Home"
+            component={HomeScreen}
+          />
+          <Stack.Screen name="CreateAudit" component={CreateAuditScreen} />
+          <Stack.Screen name="AuditDetail" component={AuditDetailScreen} />
+        </>
       ) : (
         <>
           <Stack.Screen

@@ -1,4 +1,3 @@
-// src/hooks/useUserStorage.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface User {

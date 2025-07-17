@@ -1,4 +1,3 @@
-// src/screens/LoginScreen.tsx
 import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import CLogin from '../components/auth/CLogin';

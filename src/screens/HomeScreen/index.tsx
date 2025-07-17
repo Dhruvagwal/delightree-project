@@ -1,23 +1,33 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { useAuth } from '../../context/AuthContext';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import AuditsTab from './tabs/AuditsTab';
+import ProfileTab from './tabs/ProfileTab';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const HomeScreen = ({ navigation }: any) => {
-  const { user, logout } = useAuth();
+const Tab = createBottomTabNavigator();
 
+const HomeScreen = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome, {user?.username}</Text>
-      <Text>User Type: {user?.type}</Text>
-      <Button title="Go to Details" onPress={() => navigation.navigate('Details')} />
-      <Button title="Logout" onPress={logout} color="red" />
-    </View>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName = 'home';
+          if (route.name === 'Audits') {
+            iconName = focused ? 'clipboard' : 'clipboard-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#007AFF',
+        tabBarInactiveTintColor: 'gray',
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen name="Audits" component={AuditsTab} />
+      <Tab.Screen name="Profile" component={ProfileTab} />
+    </Tab.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 22, marginBottom: 10 },
-});
 
 export default HomeScreen;
