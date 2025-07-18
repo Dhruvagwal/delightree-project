@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -18,6 +18,18 @@ const ProfileTab = () => {
     navigation.navigate('EditProfile' as never);
   };
 
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Logout', style: 'destructive', onPress: logout },
+      ],
+      { cancelable: true },
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -28,12 +40,22 @@ const ProfileTab = () => {
 
       <View style={styles.options}>
         <TouchableOpacity style={styles.optionItem} onPress={handleEditProfile}>
-          <Ionicons name="create-outline" size={20} color={TEXT_COLOR} style={styles.icon} />
+          <Ionicons
+            name="create-outline"
+            size={20}
+            color={TEXT_COLOR}
+            style={styles.icon}
+          />
           <Text style={styles.optionText}>Edit Profile</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionItem} onPress={logout}>
-          <Ionicons name="log-out-outline" size={20} color="#ff4d4f" style={styles.icon} />
+        <TouchableOpacity style={styles.optionItem} onPress={handleLogout}>
+          <Ionicons
+            name="log-out-outline"
+            size={20}
+            color="#ff4d4f"
+            style={styles.icon}
+          />
           <Text style={[styles.optionText, { color: '#ff4d4f' }]}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -72,13 +94,12 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
-  options: {
-  },
+  options: {},
   optionItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 16,
-    backgroundColor:INPUT_COLOR,
+    backgroundColor: INPUT_COLOR,
     paddingHorizontal: SCREEN_PADDING,
     borderRadius: 5,
     marginBottom: 10,

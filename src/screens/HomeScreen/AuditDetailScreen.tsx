@@ -74,29 +74,31 @@ const AuditDetailScreen = () => {
           alignItems: 'center',
         }}
       >
-        <TouchableOpacity onPress={()=>navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back-outline" size={20} color={TEXT_COLOR} />
         </TouchableOpacity>
         {/* Admin Actions */}
-        {user?.type === 'Auditor' && (
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 5,
-              justifyContent: 'space-between',
-            }}
-          >
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 5,
+            justifyContent: 'space-between',
+          }}
+        >
+          {user?.type === 'Auditor' && (
             <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
               <Ionicons name="create-outline" color={TEXT_COLOR} />
             </TouchableOpacity>
+          )}
+          {user?.type === 'Admin' && (
             <TouchableOpacity
               style={styles.deleteButton}
               onPress={handleDelete}
             >
               <Ionicons name="trash-outline" color={TEXT_COLOR} />
             </TouchableOpacity>
-          </View>
-        )}
+          )}
+        </View>
       </View>
 
       <View style={{ marginTop: 30, gap: 20 }}>
