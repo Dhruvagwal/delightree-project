@@ -1,12 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import uuid from 'react-native-uuid';
-export type Audit = {
-  id: string;
-  title: string;
-  createdAt: string;
-};
-
+import { Audit } from '../interfaces/audit';
 const AUDIT_KEY = 'audits';
 
 export const useAuditStorage = () => {
@@ -37,5 +32,13 @@ export const useAuditStorage = () => {
     await AsyncStorage.removeItem(AUDIT_KEY);
   };
 
-  return { getAudits, saveAudit, clearAudits, deleteAudit };
+  const updateAudit = async (updatedAudit: Audit): Promise<void> => {
+    const audits = await getAudits();
+    const updated = audits.map(a =>
+      a.id === updatedAudit.id ? updatedAudit : a,
+    );
+    await AsyncStorage.setItem(AUDIT_KEY, JSON.stringify(updated));
+  };
+
+  return { getAudits, saveAudit, clearAudits, deleteAudit, updateAudit };
 };

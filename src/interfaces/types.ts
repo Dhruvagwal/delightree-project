@@ -1,7 +1,8 @@
-import { Audit } from "./audit";
+import { Audit } from './audit';
 
 export type RootStackParamList = {
   Home: undefined;
-  CreateAudit: undefined;
+  Audits: undefined;
   AuditDetail: { audit: Audit };
+  CreateAudit: { audit?: Audit }; // Add audit property to CreateAudit route params
 };

@@ -36,9 +36,21 @@ function AppNavigator() {
             name="Home"
             component={HomeScreen}
           />
-          <Stack.Screen name="CreateAudit" component={CreateAuditScreen} />
-          <Stack.Screen name="AuditDetail" component={AuditDetailScreen} />
-          <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="CreateAudit"
+            component={CreateAuditScreen}
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="AuditDetail"
+            component={AuditDetailScreen}
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="EditProfile"
+            component={EditProfileScreen}
+          />
         </>
       ) : (
         <>

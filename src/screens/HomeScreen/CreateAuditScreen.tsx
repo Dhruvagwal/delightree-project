@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
-  TouchableOpacity,
   Alert,
+  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useAuditStorage, Audit } from '../../hooks/useAuditStorage';
-
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from 'src/interfaces/types';
+import { useAuditStorage } from '../../hooks/useAuditStorage';
+import { RootStackParamList } from '../../interfaces/types';
+import {
+  INPUT_COLOR,
+  PRIMARY_COLOR,
+  SCREEN_PADDING,
+  TEXT_COLOR,
+} from '../../styles/global';
+import MultiStepper from '../../components/global/MultiStepper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Audit } from '../../interfaces/audit';
 
 const auditTypesList = [
   'Security',
@@ -25,53 +33,34 @@ const auditTypesList = [
   'Other',
 ];
 
+type Navigation = StackNavigationProp<RootStackParamList, 'CreateAudit'>;
+type Route = RouteProp<RootStackParamList, 'CreateAudit'>;
+
 const CreateAuditScreen = () => {
-  type Navigation = StackNavigationProp<RootStackParamList, 'CreateAudit'>;
   const navigation = useNavigation<Navigation>();
+  const route = useRoute<Route>();
+  const { saveAudit, updateAudit } = useAuditStorage();
 
-  const { saveAudit } = useAuditStorage();
+  const editingAudit: Audit | undefined = route.params?.audit;
 
-  const [step, setStep] = useState(1);
-
-  // Step 1
   const [title, setTitle] = useState('');
   const [comment, setComment] = useState('');
-
-  // Step 2
   const [rating, setRating] = useState(0);
-
-  // Step 3
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (editingAudit) {
+      setTitle(editingAudit.title || '');
+      setComment(editingAudit.comment || '');
+      setRating(editingAudit.rating || 0);
+      setSelectedTypes(editingAudit.types || []);
+    }
+  }, [editingAudit]);
 
   const toggleAuditType = (type: string) => {
     setSelectedTypes(prev =>
       prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type],
     );
-  };
-
-  const handleNext = () => {
-    if (step === 1 && !title.trim()) {
-      Alert.alert('Validation', 'Title is required');
-      return;
-    }
-    setStep(prev => prev + 1);
-  };
-
-  const handleBack = () => {
-    setStep(prev => prev - 1);
-  };
-
-  const handleSubmit = async () => {
-    const newAudit: Audit = {
-      title: title.trim(),
-      createdAt: new Date().toISOString(),
-      comment,
-      rating,
-      types: selectedTypes,
-    } as any;
-
-    await saveAudit(newAudit);
-    navigation.replace('AuditDetail', { audit: newAudit });
   };
 
   const renderStars = () => {
@@ -82,53 +71,104 @@ const CreateAuditScreen = () => {
     ));
   };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Create Audit (Step {step}/3)</Text>
+  const handleSubmit = async () => {
+    if (!title.trim()) {
+      Alert.alert('Validation', 'Title is required');
+      return;
+    }
 
-      {step === 1 && (
+    const baseAudit: Audit = {
+      ...(editingAudit || {}),
+      id: editingAudit?.id ?? '', // Ensure id is always a string
+      title: title.trim(),
+      comment,
+      rating,
+      types: selectedTypes,
+      createdAt: editingAudit?.createdAt || new Date().toISOString(),
+    };
+
+    if (editingAudit?.id) {
+      await updateAudit(baseAudit);
+    } else {
+      await saveAudit(baseAudit);
+    }
+
+    navigation.replace('AuditDetail', { audit: baseAudit });
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginBottom: SCREEN_PADDING,
+          gap: 10,
+        }}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back-outline" size={20} color={TEXT_COLOR} />
+        </TouchableOpacity>
+        <Text style={styles.header}>
+          {editingAudit ? 'Edit Audit' : 'New Audit'}
+        </Text>
+      </View>
+
+      <MultiStepper
+        steps={['Details', 'Rating', 'Categories']}
+        onStepNext={async step => {
+          if (step === 0 && !title.trim()) {
+            Alert.alert('Validation', 'Title is required');
+            return false;
+          }
+          return true;
+        }}
+        onFinish={handleSubmit}
+      >
+        {/* Step 1 */}
         <>
           <Text style={styles.label}>Title</Text>
           <TextInput
-            style={styles.input}
             value={title}
             onChangeText={setTitle}
             placeholder="Enter audit title"
+            placeholderTextColor="#aaa"
+            style={styles.input}
           />
 
           <Text style={styles.label}>Comment</Text>
           <TextInput
-            style={styles.input}
             value={comment}
             onChangeText={setComment}
-            placeholder="Enter comment"
+            placeholder="Optional comment"
+            placeholderTextColor="#aaa"
             multiline
+            style={[styles.input, { height: 100 }]}
           />
         </>
-      )}
 
-      {step === 2 && (
+        {/* Step 2 */}
         <>
           <Text style={styles.label}>Security Rating</Text>
           <View style={styles.starsRow}>{renderStars()}</View>
         </>
-      )}
 
-      {step === 3 && (
+        {/* Step 3 */}
         <>
-          <Text style={styles.label}>Audit Types</Text>
+          <Text style={styles.label}>Select Audit Categories</Text>
           {auditTypesList.map(type => (
             <TouchableOpacity
               key={type}
               onPress={() => toggleAuditType(type)}
               style={[
-                styles.checkboxItem,
-                selectedTypes.includes(type) && styles.checkedItem,
+                styles.auditType,
+                selectedTypes.includes(type) && styles.auditTypeSelected,
               ]}
             >
               <Text
                 style={{
-                  color: selectedTypes.includes(type) ? '#fff' : '#000',
+                  color: selectedTypes.includes(type) ? '#fff' : TEXT_COLOR,
+                  textAlign: 'center',
                 }}
               >
                 {type}
@@ -136,64 +176,59 @@ const CreateAuditScreen = () => {
             </TouchableOpacity>
           ))}
         </>
-      )}
-
-      <View style={styles.buttonRow}>
-        {step > 1 && <Button title="Back" onPress={handleBack} />}
-        {step < 3 ? (
-          <Button title="Next" onPress={handleNext} />
-        ) : (
-          <Button title="Submit Audit" onPress={handleSubmit} />
-        )}
-      </View>
-    </View>
+      </MultiStepper>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, justifyContent: 'center' },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
+  container: {
+    flex: 1,
+    marginTop: 30,
+    padding: SCREEN_PADDING,
   },
-  label: { fontSize: 16, marginVertical: 8 },
+  header: {
+    fontSize: 24,
+    color: TEXT_COLOR,
+    textAlign: 'center',
+  },
+  label: {
+    fontSize: 16,
+    color: TEXT_COLOR,
+    marginBottom: 6,
+    marginTop: 16,
+  },
   input: {
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 5,
-    borderColor: '#ccc',
+    backgroundColor: INPUT_COLOR,
+    padding: 12,
+    borderRadius: 8,
+    color: TEXT_COLOR,
   },
   starsRow: {
     flexDirection: 'row',
-    marginVertical: 10,
+    marginVertical: 12,
   },
   starFilled: {
-    fontSize: 30,
+    fontSize: 32,
     color: '#FFD700',
     marginHorizontal: 5,
   },
   starEmpty: {
-    fontSize: 30,
-    color: '#ccc',
+    fontSize: 32,
+    color: '#555',
     marginHorizontal: 5,
   },
-  checkboxItem: {
+  auditType: {
     padding: 10,
-    marginVertical: 5,
+    borderRadius: 6,
+    backgroundColor: INPUT_COLOR,
     borderWidth: 1,
-    borderColor: '#007AFF',
-    borderRadius: 5,
+    borderColor: PRIMARY_COLOR,
+    marginBottom: 10,
   },
-  checkedItem: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 30,
+  auditTypeSelected: {
+    backgroundColor: PRIMARY_COLOR,
+    borderColor: PRIMARY_COLOR,
   },
 });
 
