@@ -1,12 +1,8 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {
-  StatusBar,
-  useColorScheme,
-  ActivityIndicator,
-  View,
-} from 'react-native';
+import { StatusBar, ActivityIndicator, View } from 'react-native';
+import { DarkTheme } from '@react-navigation/native';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -16,6 +12,7 @@ import HomeScreen from './screens/HomeScreen';
 import CreateAuditScreen from './screens/HomeScreen/CreateAuditScreen';
 import AuditDetailScreen from './screens/HomeScreen/AuditDetailScreen';
 import EditProfileScreen from './screens/HomeScreen/EditProfileScreen';
+import { MAIN_COLOR, PRIMARY_COLOR, TEXT_COLOR } from './styles/global';
 
 const Stack = createNativeStackNavigator();
 
@@ -62,12 +59,21 @@ function AppNavigator() {
 }
 
 export default function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <AuthProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NavigationContainer>
+      {/* <StatusBar backgroundColor={MAIN_COLOR} barStyle="light-content" /> */}
+      <StatusBar hidden />
+      <NavigationContainer
+        theme={{
+          ...DarkTheme,
+          colors: {
+            ...DarkTheme.colors,
+            background: MAIN_COLOR,
+            text: TEXT_COLOR,
+            primary: PRIMARY_COLOR,
+          },
+        }}
+      >
         <AppNavigator />
       </NavigationContainer>
     </AuthProvider>

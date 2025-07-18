@@ -28,8 +28,6 @@ type LoginFormData = z.infer<typeof LoginSchema>;
 const CLogin = () => {
   const { validateUser } = useUserStorage();
   const { login } = useAuth();
-  const navigation = useNavigation();
-
   const {
     control,
     handleSubmit,
@@ -53,8 +51,8 @@ const CLogin = () => {
 
   return (
     <View style={form_styles.container}>
-      <Text style={form_styles.title}>Login</Text>
-
+      <Text style={form_styles.title}>Welcome Back</Text>
+      <Text style={form_styles.subTitle}>Enter your detail below</Text>
       <Controller
         control={control}
         name="username"
@@ -88,11 +86,14 @@ const CLogin = () => {
         <Text style={form_styles.error}>{errors.password.message}</Text>
       )}
 
-      <Button title="Login" onPress={handleSubmit(onSubmit)} />
+      <TouchableOpacity
+        style={form_styles.button}
+        onPress={handleSubmit(onSubmit)}
+      >
+        <Text style={form_styles.buttonText}>Login</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default CLogin;

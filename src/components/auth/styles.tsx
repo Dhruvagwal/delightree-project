@@ -1,17 +1,45 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+import {
+  INPUT_COLOR,
+  MAIN_COLOR,
+  PRIMARY_COLOR,
+  SCREEN_PADDING,
+  TEXT_COLOR,
+} from '../../styles/global';
 
 export const form_styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  container: {
+  },
+  title: {
+    fontSize: 30,
+    color: TEXT_COLOR,
+    fontWeight: 'bold',
+  },
+  subTitle: {
+    color: TEXT_COLOR,
+    opacity: 0.7,
+    marginBottom: SCREEN_PADDING ,
+  },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    color: '#333',
-    marginBottom: 5,
+    padding: SCREEN_PADDING,
+    borderRadius: 5,
+    backgroundColor: INPUT_COLOR,
+    marginBottom: SCREEN_PADDING*0.5,
+    color: TEXT_COLOR,
+  },
+  button: {
+    backgroundColor: PRIMARY_COLOR,
+    padding: SCREEN_PADDING * 0.5,
     borderRadius: 5,
   },
-  title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
+  buttonText: {
+    color: TEXT_COLOR,
+    fontSize: 16,
+    width: '100%',
+    textAlign: 'center',
+  },
   error: { color: 'red', marginBottom: 8, fontSize: 12 },
+  success: { color: 'green', marginBottom: 8, fontSize: 12 },
   link: { marginTop: 20, alignItems: 'center' },
   linkText: { color: 'blue', textDecorationLine: 'underline' },
 });
