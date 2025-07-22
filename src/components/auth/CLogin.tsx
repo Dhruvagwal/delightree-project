@@ -1,4 +1,3 @@
-// src/components/CLogin.tsx
 import React from 'react';
 import {
   View,
@@ -17,7 +16,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import { form_styles } from './styles';
 
-// ✅ Zod schema
 const LoginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
